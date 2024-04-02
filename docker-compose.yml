@@ -1,0 +1,46 @@
+version: '3'
+services:
+
+  mongo-db:
+    container_name: mongo-db
+    restart: on-failure
+    image: bitnami/mongodb:7.0.6
+    env_file:
+      - src/.env
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - user-management-service_internship
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express:1.0.2-18-alpine3.18
+    restart: always
+    env_file:
+      - src/.env
+    depends_on:
+      - mongo-db
+    networks:
+      - user-management-service_internship
+    ports:
+      - "8081:8081"
+
+  app:
+    build: .
+    volumes:
+      - .:/app/
+    depends_on:
+      - mongo-db
+    networks:
+      - user-management-service_internship
+    ports:
+      - "8001:8000"
+
+volumes:
+  mongo-data:
+
+networks:
+    user-management-service_internship:
+      external: true
