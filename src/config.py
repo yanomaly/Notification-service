@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     RABBIT_HOST: str = ""
     RABBIT_PORT: int = 1
     ROUTING_KEY: str = ""
+    RABBITMQ_EXCHANGE: str = ""
+    DEATH_ROUTING_KEY: str = ""
+    MAX_RETRIES: int = 1
 
     SERVICES: str = ""
     HOSTNAME: str = ""
@@ -24,7 +27,7 @@ class Settings(BaseSettings):
     MONGODB_ROOT_USER: str = ""
     MONGODB_ROOT_PASSWORD: str = ""
     MONGODB_HOST: str = ""
-    MONGODB_PORT = 1
+    MONGODB_PORT: int = 1
 
     ME_CONFIG_MONGODB_URL: str = ""
     ME_CONFIG_MONGODB_SERVER: str = ""
