@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     RABBIT_HOST: str = ""
     RABBIT_PORT: int = 1
     ROUTING_KEY: str = ""
+    RABBITMQ_EXCHANGE: str = ""
+    DEATH_ROUTING_KEY: str = ""
+    MAX_RETRIES: int = 1
 
     SERVICES: str = ""
     HOSTNAME: str = ""
@@ -21,10 +24,12 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY_ID: str = ""
     AWS_SECRET_ACCESS_KEY: str = ""
 
+    SOURCE: str = ""
+
     MONGODB_ROOT_USER: str = ""
     MONGODB_ROOT_PASSWORD: str = ""
     MONGODB_HOST: str = ""
-    MONGODB_PORT = 1
+    MONGODB_PORT: str = 1
 
     ME_CONFIG_MONGODB_URL: str = ""
     ME_CONFIG_MONGODB_SERVER: str = ""
