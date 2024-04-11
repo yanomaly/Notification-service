@@ -2,7 +2,7 @@ import os
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-DOTENV = os.path.join(os.path.dirname(__file__), ".env")
+DOTENV = os.path.join("/app/", ".env")
 
 
 class Settings(BaseSettings):
@@ -26,16 +26,21 @@ class Settings(BaseSettings):
 
     SOURCE: str = ""
 
-    MONGODB_ROOT_USER: str = ""
-    MONGODB_ROOT_PASSWORD: str = ""
-    MONGODB_HOST: str = ""
-    MONGODB_PORT: str = 1
+    DB_NAME: str = ""
+    COLLECTION_NAME: str = ""
 
     ME_CONFIG_MONGODB_URL: str = ""
     ME_CONFIG_MONGODB_SERVER: str = ""
+    ME_CONFIG_MONGODB_PORT: int = 1
     ME_CONFIG_MONGODB_ADMINUSERNAME: str = ""
     ME_CONFIG_MONGODB_ADMINPASSWORD: str = ""
     ME_CONFIG_BASICAUTH_USERNAME: str = ""
     ME_CONFIG_BASICAUTH_PASSWORD: str = ""
+
+    MONGODB_ROOT_USER: str = ""
+    MONGODB_ROOT_PASSWORD: str = ""
+    MONGODB_INITIAL_PRIMARY_ROOT_USER: str = ""
+    MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD: str = ""
+    MONGODB_REPLICA_SET_KEY: str = ""
 
     model_config = SettingsConfigDict(env_file=DOTENV)

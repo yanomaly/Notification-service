@@ -1,6 +1,5 @@
 import re
 from datetime import datetime
-from uuid import UUID
 
 from pydantic import BaseModel, field_validator
 
@@ -8,8 +7,6 @@ email_regexp = r"^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$"
 
 
 class MessageForm(BaseModel):
-    id: UUID
-    user_id: UUID
     subject: str
     body: str
     email: str

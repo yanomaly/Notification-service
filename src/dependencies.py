@@ -5,6 +5,7 @@ from pika.adapters.blocking_connection import BlockingConnection
 from pika.connection import ConnectionParameters
 from pika.credentials import PlainCredentials
 from pika.exceptions import AMQPError
+from pymongo import MongoClient
 
 from config import Settings
 
@@ -22,6 +23,8 @@ ses_client = aws_session.client(
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
     endpoint_url=f"http://{settings.HOSTNAME_EXTERNAL}:{settings.LOCALSTACK_PORT}",
 )
+
+mongo_client = MongoClient(settings.ME_CONFIG_MONGODB_URL)
 
 
 class RabbitMQClient:
