@@ -1,10 +1,11 @@
 import logging.config
 
-import aioboto3
+import boto3
 from pika.adapters.blocking_connection import BlockingConnection
 from pika.connection import ConnectionParameters
 from pika.credentials import PlainCredentials
 from pika.exceptions import AMQPError
+from pymongo import MongoClient
 
 from config import Settings
 
@@ -13,7 +14,17 @@ base_logger = logging.getLogger("base")
 
 settings = Settings()
 
-aws_session = aioboto3.Session()
+aws_session = boto3.Session()
+
+ses_client = aws_session.client(
+    service_name="ses",
+    region_name=settings.DEFAULT_REGION,
+    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    endpoint_url=f"http://{settings.HOSTNAME_EXTERNAL}:{settings.LOCALSTACK_PORT}",
+)
+
+mongo_client = MongoClient(settings.ME_CONFIG_MONGODB_URL)
 
 
 class RabbitMQClient:
