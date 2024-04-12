@@ -9,7 +9,7 @@ class RabbitAdapter(MessagingPort):
     def __init__(self, rabbit_client: RabbitMQClient):
         self.rabbit_client = rabbit_client
 
-    def start_consuming(self, on_message_callback):
+    def start_consuming(self, on_message_callback) -> None:
         try:
             with self.rabbit_client.get_connection().channel() as channel:
                 channel.basic_consume(

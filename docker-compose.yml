@@ -1,27 +1,83 @@
 version: '3'
 services:
 
-  mongo-db:
-    container_name: mongo-db
-    restart: on-failure
+  mongodb-primary:
     image: bitnami/mongodb:7.0.6
-    env_file:
-      - src/.env
+    container_name: mongodb-primary
+    environment:
+      - MONGODB_ROOT_USER=${MONGODB_ROOT_USER}
+      - MONGODB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
     volumes:
-      - mongo-data:/data/db
+      - mongo-data:/bitnami/mongodb
     networks:
       - user-management-service_internship
     ports:
       - "27017:27017"
+
+  mongodb-secondary:
+    image: bitnami/mongodb:7.0.6
+    container_name: mongodb-secondary
+    depends_on:
+        - mongodb-primary
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_INITIAL_PRIMARY_HOST=mongodb-primary
+      - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_INITIAL_PRIMARY_ROOT_USER=${MONGODB_INITIAL_PRIMARY_ROOT_USER}
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=${MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD}
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
+    networks:
+      - user-management-service_internship
+    ports:
+      - "27027:27017"
+
+  mongodb-arbiter:
+    image: bitnami/mongodb:7.0.6
+    container_name: mongodb-arbiter
+    depends_on:
+      - mongodb-primary
+    environment:
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_INITIAL_PRIMARY_HOST=mongodb-primary
+      - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_INITIAL_PRIMARY_ROOT_USER=${MONGODB_INITIAL_PRIMARY_ROOT_USER}
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=${MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD}
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
+    networks:
+      - user-management-service_internship
+    ports:
+      - "27037:27017"
+
+  mongodb-setup:
+    container_name: mongodb-setup
+    image: bitnami/mongodb:7.0.6
+    depends_on:
+      - mongodb-primary
+      - mongodb-secondary
+      - mongodb-arbiter
+    restart: "no"
+    networks:
+      - user-management-service_internship
+    volumes:
+      - ./rs_setup.sh:/rs_setup.sh
+    entrypoint: sh -c "sh rs_setup.sh"
+    ports:
+      - "27047:27017"
 
   mongo-express:
     container_name: mongo-express
     image: mongo-express:1.0.2-18-alpine3.18
     restart: always
     env_file:
-      - src/.env
+      - ./.env
     depends_on:
-      - mongo-db
+      - mongodb-primary
+      - mongodb-setup
     networks:
       - user-management-service_internship
     ports:
@@ -32,7 +88,8 @@ services:
     volumes:
       - .:/app/
     depends_on:
-      - mongo-db
+      - mongodb-primary
+      - mongodb-setup
     networks:
       - user-management-service_internship
     ports:
